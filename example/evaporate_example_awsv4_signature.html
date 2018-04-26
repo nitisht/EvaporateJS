@@ -2,7 +2,7 @@
 <html>
 <head>
    <title>Evaporate Example</title>
-   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.2.43.min.js"></script>
+   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.226.1.js"></script>
    <script language="javascript" type="text/javascript" src="../evaporate.js"></script>
 </head>
 <body>
@@ -23,13 +23,15 @@
 
   Evaporate.create({
     /* START EDITS */
-    aws_key: '<aws_key>', // REQUIRED -- set this to your AWS_ACCESS_KEY_ID
-    bucket: '<bucket-name>', // REQUIRED -- set this to your s3 bucket name
+    aws_key: 'minio', // REQUIRED -- set this to your AWS_ACCESS_KEY_ID
+    bucket: 'uploads', 
     awsRegion: 'us-east-1', // OPTIONAL -- change this if your bucket is outside us-east-1
+    aws_url: 'http://localhost:9000',
     /* END EDITS */
     signerUrl: 'http://localhost:3000/signv4_auth',
     awsSignatureVersion: '4',
-    computeContentMd5: true,
+    computeContentMd5: false,
+    sendCanonicalRequestToSignerUrl: true,
     cryptoMd5Method: function (data) { return AWS.util.crypto.md5(data, 'base64'); },
     cryptoHexEncodedHash256: function (data) { return AWS.util.crypto.sha256(data, 'hex'); }
   })
@@ -48,6 +50,12 @@
             file: files[i],
             progress: function (progress) {
               console.log('making progress: ' + progress);
+            },
+            started: function (started) {
+              console.log('Start Time ', new Date().getTime())
+            },
+            complete: function (complete) {
+              console.log('Complete Time ', new Date().getTime())
             }
           })
           .then(function (awsKey) {

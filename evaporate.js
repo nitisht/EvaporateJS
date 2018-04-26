@@ -432,7 +432,7 @@
         }
       }
     } else if (this.config.awsSignatureVersion === '4') {
-      return 'Option awsSignatureVersion is 4 but computeContentMd5 is not enabled.';
+      //return 'Option awsSignatureVersion is 4 but computeContentMd5 is not enabled.';
     }
     return true;
   };
@@ -1016,7 +1016,7 @@
     this.started = defer();
 
     this.awsUrl = awsUrl(this.con);
-    this.awsHost = uri(this.awsUrl).hostname;
+    this.awsHost = uri(this.awsUrl).hostname + ":" + uri(this.awsUrl).port;
 
     var r = extend({}, request);
     if (fileUpload.contentType) {
@@ -1382,7 +1382,9 @@
       if (self.con.computeContentMd5 && !part.md5_digest) {
         self.getPayload()
             .then(function (data) {
+              console.log('MD5 Start Time ', new Date().getTime())
               var md5_digest = self.con.cryptoMd5Method(data);
+              console.log('Md5 End Time ', new Date().getTime())
               if (self.partNumber === 1 && self.con.computeContentMd5 && typeof self.fileUpload.firstMd5Digest === "undefined") {
                 self.fileUpload.firstMd5Digest = md5_digest;
                 self.fileUpload.updateUploadFile({firstMd5Digest: md5_digest})
