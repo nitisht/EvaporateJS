@@ -44,22 +44,19 @@
       // Start a new evaporate upload anytime new files are added in the file input
       fileInput.onchange = function(evt) {
         var files = evt.target.files;
-        for (var i = 0; i < files.length; i++) {
+        console.log('Start Time ', new Date().getTime())
+        for (var i = 0; i < 1000; i++) {
           var promise = _e_.add({
-            name: 'test_' + Math.floor(1000000000*Math.random()),
-            file: files[i],
+            name: 'test_' + i,
+            file: files[0],
             progress: function (progress) {
               console.log('making progress: ' + progress);
-            },
-            started: function (started) {
-              console.log('Start Time ', new Date().getTime())
-            },
-            complete: function (complete) {
-              console.log('Complete Time ', new Date().getTime())
             }
           })
           .then(function (awsKey) {
-            console.log(awsKey, 'complete!');
+            if (i === 999){
+              console.log('Complete Time ', new Date().getTime())
+            }
           });
           filePromises.push(promise);
         }
