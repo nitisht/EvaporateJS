@@ -43,19 +43,18 @@
 
       // Start a new evaporate upload anytime new files are added in the file input
       fileInput.onchange = function(evt) {
-        var files = evt.target.files;
-        for (var i = 0; i < files.length; i++) {
+        var file = evt.target.files[0];
+        var fileArray = []
+        var count = 1000
+        for (var i = 0; i < count; i++){
+          fileArray[i] = new File([file], i, { type: file.type })
+        }
+        for (var i = 0; i < count; i++) {
           var promise = _e_.add({
-            name: 'test_' + Math.floor(1000000000*Math.random()),
-            file: files[i],
+            name: 'test_' + i,
+            file: fileArray[i],
             progress: function (progress) {
-              console.log('making progress: ' + progress);
-            },
-            started: function (started) {
-              console.log('Start Time ', new Date().getTime())
-            },
-            complete: function (complete) {
-              console.log('Complete Time ', new Date().getTime())
+              console.log('Uploading file: ' + file.name);
             }
           })
           .then(function (awsKey) {
@@ -64,9 +63,12 @@
           filePromises.push(promise);
         }
 
+        var start = (new Date()).getTime()
         // Wait until all promises are complete
         Promise.all(filePromises)
           .then(function () {
+            var end = (new Date()).getTime()
+            alert("Total time to upload " + count + " files : "+ (end - start) +" milliseconds")
             console.log('All files were uploaded successfully.');
           }, function (reason) {
             console.log('All files were not uploaded successfully:', reason);
